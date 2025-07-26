@@ -13,13 +13,13 @@ app.get("/api/option-chain/:symbol", async (req, res) => {
   try {
     const browser = await chromium.launch({
       headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
 
-    const context = await browser.newContext();
-    const page = await context.newPage();
-
+    const page = await browser.newPage();
     await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
-    await page.goto(`https://www.nseindia.com/option-chain`, {
+
+    await page.goto("https://www.nseindia.com/option-chain", {
       waitUntil: "networkidle"
     });
 
@@ -34,9 +34,9 @@ app.get("/api/option-chain/:symbol", async (req, res) => {
     await browser.close();
 
     const data = JSON.parse(body);
-
     const underlyingValue = data.records.underlyingValue;
     const optionData = data.filtered.data;
+
     const labels = optionData.map(row => row.strikePrice);
     const callOi = optionData.map(row => row.CE?.openInterest || 0);
     const putOi = optionData.map(row => row.PE?.openInterest || 0);
@@ -55,7 +55,7 @@ app.get("/api/option-chain/:symbol", async (req, res) => {
 
     res.json({
       underlyingValue,
-      lotSize: data.filtered.data[0]?.marketLot || 0,
+      lotSize: optionData[0]?.marketLot || 0,
       maxPain,
       chartData: {
         labels,
@@ -71,7 +71,7 @@ app.get("/api/option-chain/:symbol", async (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("✅ Backend is running (Playwright version).");
+  res.send("✅ Backend is running (Playwright)");
 });
 
 app.listen(PORT, () => {

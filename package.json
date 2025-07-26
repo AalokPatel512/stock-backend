@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "postinstall": "npx playwright install --with-deps"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +17,7 @@
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "node-fetch": "^2.7.0",
-    "tough-cookie": "^5.1.2",
-    "playwright": "^1.43.1"
+    "playwright": "^1.43.1",
+    "tough-cookie": "^5.1.2"
   }
 }

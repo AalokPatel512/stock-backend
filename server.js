@@ -1,5 +1,5 @@
 const express = require("express");
-const { chromium } = require("playwright");
+const { chromium } = require("playwright-chromium");
 const cors = require("cors");
 
 const app = express();
@@ -66,12 +66,12 @@ app.get("/api/option-chain/:symbol", async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(500).json({ error: "Playwright fetch failed: " + err.message });
+    res.status(500).json({ error: "Playwright-Chromium fetch failed: " + err.message });
   }
 });
 
 app.get("/", (req, res) => {
-  res.send("✅ Backend is running (Playwright)");
+  res.send("✅ Backend is running (playwright-chromium).");
 });
 
 app.listen(PORT, () => {

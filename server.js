@@ -4,13 +4,17 @@ const cors = require("cors");
 
 const app = express();
 app.use(cors());
-const PORT = 5000;
+
+const PORT = process.env.PORT || 5000;
 
 app.get("/api/option-chain/:symbol", async (req, res) => {
   const symbol = req.params.symbol.toUpperCase();
 
   try {
-    const browser = await puppeteer.launch({ headless: "new" });
+    const browser = await puppeteer.launch({
+      headless: "new",
+      args: ['--no-sandbox', '--disable-setuid-sandbox'] // required on Render
+    });
     const page = await browser.newPage();
 
     await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
@@ -30,7 +34,6 @@ app.get("/api/option-chain/:symbol", async (req, res) => {
 
     const data = JSON.parse(body);
 
-    // Extract and return same format
     const underlyingValue = data.records.underlyingValue;
     const optionData = data.filtered.data;
     const labels = optionData.map(row => row.strikePrice);
@@ -66,6 +69,10 @@ app.get("/api/option-chain/:symbol", async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.send("✅ Backend is running.");
+});
+
 app.listen(PORT, () => {
-  console.log(`🚀 Puppeteer server running at http://localhost:${PORT}`);
+  console.log(`🚀 Puppeteer server running on port ${PORT}`);
 });

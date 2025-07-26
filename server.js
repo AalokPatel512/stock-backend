@@ -1,5 +1,5 @@
 const express = require("express");
-const puppeteer = require("puppeteer-core");
+const { chromium } = require("playwright");
 const cors = require("cors");
 
 const app = express();
@@ -11,17 +11,16 @@ app.get("/api/option-chain/:symbol", async (req, res) => {
   const symbol = req.params.symbol.toUpperCase();
 
   try {
-    const browser = await puppeteer.launch({
-      headless: "new",
-      executablePath: "/usr/bin/google-chrome", // system-installed chrome on Render
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    const browser = await chromium.launch({
+      headless: true,
     });
 
-    const page = await browser.newPage();
+    const context = await browser.newContext();
+    const page = await context.newPage();
 
     await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
     await page.goto(`https://www.nseindia.com/option-chain`, {
-      waitUntil: "networkidle2"
+      waitUntil: "networkidle"
     });
 
     const dataUrl = `https://www.nseindia.com/api/option-chain-equities?symbol=${symbol}`;
@@ -67,12 +66,12 @@ app.get("/api/option-chain/:symbol", async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(500).json({ error: "Puppeteer fetch failed: " + err.message });
+    res.status(500).json({ error: "Playwright fetch failed: " + err.message });
   }
 });
 
 app.get("/", (req, res) => {
-  res.send("✅ Backend is running.");
+  res.send("✅ Backend is running (Playwright version).");
 });
 
 app.listen(PORT, () => {

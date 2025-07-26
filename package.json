@@ -4,8 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "postinstall": "npx puppeteer browsers install chrome"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -17,7 +16,7 @@
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "node-fetch": "^2.7.0",
-    "puppeteer": "^24.15.0",
+    "puppeteer-core": "^24.15.0",
     "tough-cookie": "^5.1.2"
   }
 }

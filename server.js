@@ -1,5 +1,5 @@
 const express = require("express");
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
 const cors = require("cors");
 
 const app = express();
@@ -13,8 +13,10 @@ app.get("/api/option-chain/:symbol", async (req, res) => {
   try {
     const browser = await puppeteer.launch({
       headless: "new",
-      args: ['--no-sandbox', '--disable-setuid-sandbox'] // required on Render
+      executablePath: "/usr/bin/google-chrome", // system-installed chrome on Render
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
+
     const page = await browser.newPage();
 
     await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
@@ -74,5 +76,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Puppeteer server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
